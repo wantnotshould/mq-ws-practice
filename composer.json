@@ -3,6 +3,7 @@
 	"autoload": {},
 	"require": {
 		"php": ">=8.4.3",
-		"ext-redis": "*"
+		"ext-redis": "*",
+		"ext-rdkafka": "*"
 	}
 }
