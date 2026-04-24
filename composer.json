@@ -1,0 +1,8 @@
+{
+	"name": "wantnotshould/mq-ws-practice",
+	"autoload": {},
+	"require": {
+		"php": ">=8.4.3",
+		"ext-redis": "*"
+	}
+}
