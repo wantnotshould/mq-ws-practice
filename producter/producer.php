@@ -12,11 +12,20 @@ $conf = new RdKafka\Conf();
 // Kafka 地址，如果在 Docker 外部运行填 localhost:9092
 $conf->set('bootstrap.servers', '127.0.0.1:9092');
 
+// 设置发送重试次数
+$conf->set('retries', '3');
+
 $producer = new RdKafka\Producer($conf);
 $topic = $producer->newTopic("test_topic");
 
+echo " [x] 开始发送任务...\n";
+
 for ($i = 0; $i < 5; $i++) {
-    $payload = "Message payload " . $i . " at " . date('Y-m-d H:i:s');
+    $payload = json_encode([
+        'task_id' => $i,
+        'time' => date('Y-m-d H:i:s'),
+        'content' => 'Hello Kafka ' . $i
+    ]);
 
     /**
      * 参数说明：
@@ -29,7 +38,15 @@ for ($i = 0; $i < 5; $i++) {
     // 轮询等待发送回调，确保消息发出
     $producer->poll(0);
     echo " [x] Sent: $payload \n";
+    usleep(100000); // 模拟间隔
 }
 
 // 彻底冲刷队列，确保最后几条消息不会因为脚本结束而丢失
-$producer->flush(10000); // 等待最多 10 秒
+// 修复点：将 flush 的返回值赋值给 $result
+$result = $producer->flush(10000);
+
+if (RD_KAFKA_RESP_ERR_NO_ERROR !== $result) {
+    echo " [!] 警告：部分消息未能成功发送。错误代码: $result \n";
+} else {
+    echo " [OK] 所有消息已成功冲刷至 Kafka。\n";
+}
