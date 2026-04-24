@@ -38,6 +38,8 @@ $conf->set('bootstrap.servers', '127.0.0.1:9092');
 $conf->set('auto.offset.reset', 'smallest');
 
 $consumer = new RdKafka\KafkaConsumer($conf);
+$conf->set('enable.auto.commit', 'true');
+$conf->set('auto.commit.interval.ms', '1000');
 
 // 订阅 Topic
 $consumer->subscribe(['test_topic']);
@@ -47,11 +49,11 @@ $maxTasks = 5000;       // 处理 5000 个任务后自动退出，防止内存�
 $memoryLimit = 128 * 1024 * 1024; // 128MB 内存上限
 $processedCount = 0;
 
-echo " [*] 正在监听消息... \n";
+echo " [*] 正在监听 127.0.0.1:9092 的消息... \n";
 
 while (!$shouldExit) {
-    // 等待消息，120000ms 为超时时间
-    $message = $consumer->consume(120000);
+    // 每次等待 1 秒
+    $message = $consumer->consume(1000);
 
     switch ($message->err) {
         case RD_KAFKA_RESP_ERR_NO_ERROR:

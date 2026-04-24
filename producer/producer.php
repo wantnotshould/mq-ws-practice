@@ -12,13 +12,15 @@ $conf = new RdKafka\Conf();
 // Kafka 地址，如果在 Docker 外部运行填 localhost:9092
 $conf->set('bootstrap.servers', '127.0.0.1:9092');
 
+$conf->set('acks', 'all');
 // 设置发送重试次数
 $conf->set('retries', '3');
+$conf->set('linger.ms', '5');
 
 $producer = new RdKafka\Producer($conf);
 $topic = $producer->newTopic("test_topic");
 
-echo " [x] 开始发送任务...\n";
+echo " [x] 开始发送任务至 127.0.0.1:9092...\n";
 
 for ($i = 0; $i < 5; $i++) {
     $payload = json_encode([
