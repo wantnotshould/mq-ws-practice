@@ -4,6 +4,7 @@
 	"require": {
 		"php": ">=8.4.3",
 		"ext-redis": "*",
-		"ext-rdkafka": "*"
+		"ext-rdkafka": "*",
+		"ext-sockets": "*"
 	}
 }
